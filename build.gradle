@@ -1,0 +1,21 @@
+tasks.register('buildAll') {
+	group = 'build'
+	description = 'Builds EagerLib for every supported Minecraft version into dist/.'
+	dependsOn subprojects.collect { "${it.path}:build" }
+	doLast {
+		subprojects.each { p ->
+			copy {
+				from p.layout.buildDirectory.dir('libs')
+				into file('dist')
+				include '*.jar'
+				exclude '*-sources.jar'
+			}
+		}
+	}
+}
+
+tasks.register('publishAll') {
+	group = 'publishing'
+	description = 'Publishes every EagerLib version to ~/.m2.'
+	dependsOn subprojects.collect { "${it.path}:publishToMavenLocal" }
+}

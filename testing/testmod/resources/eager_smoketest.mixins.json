@@ -1,0 +1,7 @@
+{
+	"required": true,
+	"package": "dev.eagertest.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": ["MinecraftTickMixin"],
+	"injectors": { "defaultRequire": 1 }
+}

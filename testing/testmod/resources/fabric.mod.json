@@ -1,0 +1,9 @@
+{
+	"schemaVersion": 1,
+	"id": "eager_smoketest",
+	"version": "0.0.0",
+	"name": "Eager mods dev smoke test",
+	"environment": "client",
+	"mixins": ["eager_smoketest.mixins.json"],
+	"depends": { "eagerlib": "*" }
+}

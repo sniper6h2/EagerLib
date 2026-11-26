@@ -1,0 +1,77 @@
+apply plugin: 'maven-publish'
+
+def lib = buildscript.sourceFile.parentFile
+def libProps = new Properties()
+new File(lib, 'eagerlib.properties').withInputStream { libProps.load(it) }
+
+version = "${libProps.eagerlib_version}+mc${project.minecraft_version}"
+group = 'dev.eagerlib'
+
+base {
+	archivesName = 'eagerlib'
+}
+
+def javaVersion = (project.java_version as String).toInteger()
+
+sourceSets {
+	stubs {
+		java.srcDirs = [new File(lib, 'stubs/java')]
+	}
+	main {
+		java.srcDirs += new File(lib, 'src/main/java')
+		project.variants.split(',').each { java.srcDirs += new File(lib, "variants/${it.trim()}/java") }
+		resources.srcDirs += new File(lib, 'src/main/resources')
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	if (project.findProperty('obfuscated') == 'true') {
+		mappings loom.officialMojangMappings()
+		modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+	} else {
+		implementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+	}
+}
+
+sourceSets.stubs.compileClasspath += configurations.compileClasspath
+sourceSets.main.compileClasspath += sourceSets.stubs.output
+
+processResources {
+	def props = [
+		version      : project.version,
+		minecraft_dep: project.minecraft_dep,
+		java_version : project.java_version,
+		mixin_compat : "JAVA_${project.java_version}",
+	]
+	inputs.properties props
+	filesMatching(['fabric.mod.json', '*.mixins.json']) {
+		expand props
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = javaVersion
+	it.options.encoding = 'UTF-8'
+}
+
+java {
+	sourceCompatibility = JavaVersion.toVersion(javaVersion)
+	targetCompatibility = JavaVersion.toVersion(javaVersion)
+	withSourcesJar()
+}
+
+jar {
+	from(new File(lib, 'LICENSE')) {
+		rename { "${it}_eagerlib" }
+	}
+}
+
+publishing {
+	publications {
+		create('mavenJava', MavenPublication) {
+			artifactId = 'eagerlib'
+			from components.java
+		}
+	}
+}

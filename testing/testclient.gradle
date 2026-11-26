@@ -1,0 +1,29 @@
+def testmodDir = new File(buildscript.sourceFile.parentFile, 'testmod')
+def testJava = (project.java_version as String).toInteger()
+
+sourceSets {
+	testmod {
+		java.srcDirs = [new File(testmodDir, 'java')]
+		resources.srcDirs = [new File(testmodDir, 'resources')]
+		compileClasspath += main.compileClasspath + main.output
+		runtimeClasspath += main.runtimeClasspath + main.output
+	}
+}
+
+tasks.named('compileTestmodJava') { options.release = testJava }
+
+loom {
+	mods {
+		"${project.eagerModId}" { sourceSet sourceSets.main }
+		eager_smoketest { sourceSet sourceSets.testmod }
+	}
+	runs {
+		testClient {
+			client()
+			name = 'Eager smoke test'
+			source sourceSets.testmod
+			programArgs '--quickPlaySingleplayer', 'test'
+			runDir 'run'
+		}
+	}
+}

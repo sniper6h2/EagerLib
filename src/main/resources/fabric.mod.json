@@ -1,0 +1,24 @@
+{
+	"schemaVersion": 1,
+	"id": "eagerlib",
+	"version": "${version}",
+	"name": "EagerLib",
+	"description": "Shared library for Eager mods: one liquid-glass settings menu for every mod, global key binds, a HUD editor, teams and changelogs.",
+	"authors": ["Eager"],
+	"license": "MIT",
+	"icon": "assets/eagerlib/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["dev.eagerlib.core.EagerLib"],
+		"modmenu": ["dev.eagerlib.modmenu.EagerModMenu"]
+	},
+	"mixins": ["eagerlib.mixins.json"],
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "${minecraft_dep}",
+		"java": ">=${java_version}"
+	},
+	"custom": {
+		"modmenu": { "badges": ["library"] }
+	}
+}
