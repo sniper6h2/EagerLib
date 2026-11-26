@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 MC="${1:?usage: smoke-test.sh <minecraft version>}"
-ROOT="${EAGER_MOD_ROOT:?run this through the mod repository's scripts/smoke-test.sh}"
+ROOT="${EAGER_MOD_ROOT:?run this through scripts/smoke-test.sh in a mod repository}"
 RUN="$ROOT/versions/$MC/run"
 WORLD="$RUN/saves/test"
 
